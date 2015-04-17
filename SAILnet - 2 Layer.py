@@ -6,6 +6,8 @@ Created on Mon Nov 10 19:09:00 2014
 """
 #Fun times with git!!!!1
 
+#steping out of the stone ages
+
 import numpy as np
 import cPickle, time
 from math import ceil
