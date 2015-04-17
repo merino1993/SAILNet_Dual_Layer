@@ -4,6 +4,7 @@ Created on Mon Nov 10 19:09:00 2014
 
 @author: merino1993
 """
+#Fun times with git!!!!1
 
 import numpy as np
 import cPickle, time
