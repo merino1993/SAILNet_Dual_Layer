@@ -34,22 +34,31 @@ class TwoLayerInference(BaseInference):
         W1, W2 = self.network.get_inhibitory_weights()        
         theta1, theta2 = self.network.get_thresholds() 
         
-        M1 = Q1, Q2.shape[1] #dimension N x M
+        M1 = Q1.shape[1] #dimension N x M
         M2 = Q2.shape[1] #dimension M1 x M2
-    
-        num_iterations = 17
+        '''
+        Possible problem with code is that M1 is not a 1D array,
+        which the code requires. After trying to flatten the array
+        to 1D another error occurred. Ask Jesse about this
+        '''
+        #c = M1.ravel()
+        #d = M2.ravel()
+        num_iterations = 50
         
         eta = .1
     
         B1 = inputs.dot(Q1)
         B2 = np.zeros((batch_size,M1)) #initialise since aas hasn't been defined yet, need to re-update after each step since inputs for layer 2 are the changing spiking patterns
-    
+        #batch_size,M1
         T1 = np.tile(theta1,(batch_size,1))
         T2 = np.tile(theta2,(batch_size,1))
     
         Ys1 = np.zeros((batch_size,M1))
+        #batch_size,M1
         aas1 = np.zeros((batch_size,M1)) #spiking patterns from Layer 1
+        #batch_size,M1        
         Y1 = np.zeros((batch_size,M1))
+        #batch_size,M1
         
         Ys2 = np.zeros((batch_size,M2))
         aas2 = np.zeros((batch_size,M2)) #spiking patterns from Layer 2
