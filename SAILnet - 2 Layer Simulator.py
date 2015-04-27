@@ -26,13 +26,6 @@ print K[idx[-3]], ' index '+str(idx[-3])
 print K[idx[-4]], ' index '+str(idx[-4])
 print K[idx[-5]], ' index '+str(idx[-5])
 
-#separate plot
-print ''
-total_time = data_time+algo_time
-print 'Percent time spent gathering data: '+str(data_time/total_time)+' %'
-print 'Percent time spent in SAILnet: '+str(algo_time/total_time)+' %'
-print ''  
-
 plt.figure()
 plt.plot(reconstruction_error1)
 plt.title("Mean Squared Error of SAILNet's Reconstruction with Layer 1")   
