@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr 02 12:06:06 2015
+Created on Fri Apr 24 11:35:24 2015
 
 @author: merino1993
 """
-
 
 import numpy as np
 import cPickle, time
@@ -154,51 +153,6 @@ print K[idx[-2]], ' index '+str(idx[-2])
 print K[idx[-3]], ' index '+str(idx[-3])
 print K[idx[-4]], ' index '+str(idx[-4])
 print K[idx[-5]], ' index '+str(idx[-5])
-
-
-"""
-syntax: [:,0] not specifying index before colon lists all
-"""
-
-"""
-moving images
- 1) run for 5000-10000 iterations
- 2) plot layer 1 neurons (using Jesse's script), hopefully will converge to Gabor
- 3) increase OC1 to 1, run on desktop if necessary
- 4) simplest way of getting movies
-     -run activities loop (n_iterations) for longer,
-     instead of 50(ms) run for first ~17 (what it is for movies) iterations
-     for next ~16 frames,[#(possible new code after this point)] keep 'visual range' constant but move it several pixels over
-     do this for ~16-17 steps / frame (maybe 3ish frames)
-     ***to do the 'moving', must step towards a new direction
-     -in activities for loop, before calling inputs X, try to make 3d tensor, for each batch move in different time direction
-     in activities, would only have to grab several "time" slices
-
-"""
-       
-#separate plot
-print ''
-total_time = data_time+algo_time
-print 'Percent time spent gathering data: '+str(data_time/total_time)+' %'
-print 'Percent time spent in SAILnet: '+str(algo_time/total_time)+' %'
-print ''  
-
-plt.figure()
-plt.plot(reconstruction_error1)
-plt.title("Mean Squared Error of SAILNet's Reconstruction with Layer 1")   
-'''what are the axis of plt.title("Mean Squared Error of SAILNet's Reconstruction with 2 Layer Model")'''
-
-plt.figure()
-plt.plot(reconstruction_error2)
-plt.title("Mean Squared Error of SAILNet's Reconstruction with Layer 2")
-
-#plot all receptive fields
-plt.figure()
-side = int(np.sqrt(N))
-img = tile_raster_images(Q1.T, img_shape = (side,side), tile_shape = (2*side,side*OC1/2), tile_spacing=(1, 1), scale_rows_to_unit_interval=True, output_pixel_vals=True)
-plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
-plt.title('Receptive Fields')
-plt.show()
-
+   
 with open('output.pkl','wb') as f:
     cPickle.dump((Q1,W1,W2,theta1,Q2,theta2),f)
