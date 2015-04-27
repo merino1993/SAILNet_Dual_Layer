@@ -13,8 +13,8 @@ from classtrial1 import Network
 from classtrial1 import TwoLayerInference
 from classtrial1 import Updates
 
-with open('output.pkl','wb') as f:
-    cPickle.load(f)
+with open('images.pkl','rb') as f:
+    images = cPickle.load(f)
 
 #separate plot
 print ''
