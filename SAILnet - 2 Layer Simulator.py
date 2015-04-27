@@ -13,8 +13,18 @@ from classtrial1 import Network
 from classtrial1 import TwoLayerInference
 from classtrial1 import Updates
 
-with open('images.pkl','rb') as f:
-    images = cPickle.load(f)
+with open('output.pkl','r') as f:
+    Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2=cPickle.load(f)
+
+import matplotlib.pyplot as plt
+K = Q2 #Q2.shape = (25,25)
+idx = K.argsort() #sorts in increasing order
+print '5 strongest receptive fields in layer 2 (decreasing order): '
+print K[idx[-1]], ' index '+str(idx[-1])
+print K[idx[-2]], ' index '+str(idx[-2])
+print K[idx[-3]], ' index '+str(idx[-3])
+print K[idx[-4]], ' index '+str(idx[-4])
+print K[idx[-5]], ' index '+str(idx[-5])
 
 #separate plot
 print ''

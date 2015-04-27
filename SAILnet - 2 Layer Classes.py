@@ -17,8 +17,8 @@ from classtrial1 import Updates
 rng = np.random.RandomState(0)
 
 # Parameters
-batch_size = 128
-num_trials = 1000
+batch_size = 32
+num_trials = 100
 #change num_trials to 10000, reduce batch_size 128
 
 # Load Images

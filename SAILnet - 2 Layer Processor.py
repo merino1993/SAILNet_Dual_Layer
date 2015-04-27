@@ -16,8 +16,8 @@ from classtrial1 import Updates
 rng = np.random.RandomState(0)
 
 # Parameters
-batch_size = 128
-num_trials = 1000
+batch_size = 32
+num_trials = 100
 #change num_trials to 10000, reduce batch_size 128
 
 # Load Images
@@ -144,15 +144,8 @@ for tt in xrange(num_trials):
         algo_time += dt/60.   
    
 print ''        
-import matplotlib.pyplot as plt
-K = Q2 #Q2.shape = (25,25)
-idx = K.argsort() #sorts in increasing order
-print '5 strongest receptive fields in layer 2 (decreasing order): '
-print K[idx[-1]], ' index '+str(idx[-1])
-print K[idx[-2]], ' index '+str(idx[-2])
-print K[idx[-3]], ' index '+str(idx[-3])
-print K[idx[-4]], ' index '+str(idx[-4])
-print K[idx[-5]], ' index '+str(idx[-5])
    
 with open('output.pkl','wb') as f:
-    cPickle.dump((Q1,W1,W2,theta1,Q2,theta2),f)
+    cPickle.dump((Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2),f)
+    
+    
