@@ -17,7 +17,7 @@ rng = np.random.RandomState(0)
 
 # Parameters
 batch_size = 128
-num_trials = 10000
+num_trials = 100
 #change num_trials to 10000, reduce batch_size 128
 
 # Load Images
@@ -30,7 +30,7 @@ BUFF = 20 #number of pixels outside of image that don't get sampled from for inp
 
 # Neuron Parameters
 #Layer 1
-N = 64 #number of inputs
+N = 144 #number of inputs
 sz = np.sqrt(N).astype(np.int)
 OC1 = 2 #overcompleteness 
 M1 = OC1*N #number of neurons
@@ -54,8 +54,8 @@ Q1 = Q1.dot(np.diag(1./np.sqrt(np.diag(Q1.T.dot(Q1)))))
 Q2 = rng.randn(M1,M2)
 Q2 = Q2.dot(np.diag(1./np.sqrt(np.diag(Q2.T.dot(Q2)))))
 
-W1 = np.zeros((M1,M2))
-W2 = np.zeros((M1,M2))
+W1 = np.zeros((M1,M1))
+W2 = np.zeros((M2,M2))
 
 """
 Neuron has two 'memories': Q, W
@@ -113,8 +113,8 @@ for tt in xrange(num_trials):
     dt = time.time()
     # Calculate network activities
     Y1,Y2 = infer.activities(X)
-    muy1 = np.mean(Y1,axis=1)
-    muy2 = np.mean(Y2,axis=1)
+    muY1 = np.mean(Y1,axis=0)
+    muY2 = np.mean(Y2,axis=0)
     Cyy1 = Y1.T.dot(Y1)/batch_size
     Cyy2 = Y2.T.dot(Y2)/batch_size
          
@@ -122,9 +122,12 @@ for tt in xrange(num_trials):
     reconstruction_error1[tt] = np.mean((X-Y1.dot(Q1.T))**2)/2.
     reconstruction_error2[tt] = np.mean((Y1-Y2.dot(Q2.T))**2)/2.
     
+    updates.update_inhibitory_weights(Cyy1, Cyy2)
+    updates.update_feedforward_weights(Y1, Y2, X, batch_size)
+    updates.update_thresholds(muY1, muY2, gamma, p, batch_size)
 
-    Y_ave1 = (1.-eta_ave)*Y_ave1 + eta_ave*muy1
-    Y_ave2 = (1.-eta_ave)*Y_ave2 + eta_ave*muy2
+    Y_ave1 = (1.-eta_ave)*Y_ave1 + eta_ave*muY1
+    Y_ave2 = (1.-eta_ave)*Y_ave2 + eta_ave*muY2
     Cyy_ave1=(1.-eta_ave)*Cyy_ave1 + eta_ave*Cyy1
     Cyy_ave2=(1.-eta_ave)*Cyy_ave2 + eta_ave*Cyy2
     

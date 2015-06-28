@@ -90,32 +90,35 @@ class Updates(object):
         self.p=p
     def update_inhibitory_weights(self, Cyy1, Cyy2):
         dW1 = self.alpha*(Cyy1-self.p**2)
-        W1=self.network.inhibitory_weights        
+        W1, W2 =self.network.inhibitory_weights   
         W1 += dW1
         W1 = W1-np.diag(np.diag(W1))
         W1[W1 < 0] = 0.
-        self.network.inhibitory_weights=W1
         
         dW2 = self.alpha*(Cyy2-self.p**2)
-        W2=self.network.inhibitory_weights       
         W2 += dW2
         W2 = W2-np.diag(np.diag(W2))
         W2[W2 < 0] = 0.
-        self.network.inhibitory_weights=W2
-    def update_feedforward_weights(self, Y1, Y2, X):
+        self.network.inhibitory_weights= W1, W2
+    def update_feedforward_weights(self, Y1, Y2, X, batch_size):
+        beta=self.beta
         square_act1 = np.sum(Y1*Y1,axis=0)
         square_act2 = np.sum(Y2*Y2,axis=0)
         mymat1 = np.diag(square_act1)
         mymat2 = np.diag(square_act2)
+        Q1, Q2 = self.network.feedforward_weights
         dQ1 = beta*X.T.dot(Y1)/batch_size - beta*Q1.dot(mymat1)/batch_size
-        self.network.feedforward_weights += dQ1
+        Q1 += dQ1
         dQ2 = beta*Y1.T.dot(Y2)/batch_size - beta*Q2.dot(mymat2)/batch_size
-        self.network.feedforward_weights += dQ2
-    def update_thresholds(self, Y1, Y2):
-        dtheta1 = gamma*(np.sum(Y1,axis=0)/batch_size-p)
-        dtheta2 = gamma*(np.sum(Y2,axis=0)/batch_size-p)
-        self.network.thresholds += dtheta1
-        self.network.thresholds += dtheta2
+        Q2 += dQ2
+        self.network.feedforward_weights = Q1, Q2
+    def update_thresholds(self, muY1, muY2, gamma, p, batch_size):
+        dtheta1 = gamma*(muY1-p)
+        dtheta2 = gamma*(muY2-p)
+        theta1, theta2 = self.network.thresholds
+        theta1 += dtheta1
+        theta2 += dtheta2
+        self.network.thresholds = theta1, theta2
 
 
     
