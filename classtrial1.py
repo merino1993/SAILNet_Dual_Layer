@@ -36,11 +36,7 @@ class TwoLayerInference(BaseInference):
         
         M1 = Q1.shape[1] #dimension N x M
         M2 = Q2.shape[1] #dimension M1 x M2
-        '''
-        Possible problem with code is that M1 is not a 1D array,
-        which the code requires. After trying to flatten the array
-        to 1D another error occurred. Ask Jesse about this
-        '''
+
         #c = M1.ravel()
         #d = M2.ravel()
         num_iterations = 50
@@ -123,26 +119,3 @@ class Updates(object):
 
     
 '''Get new code to run, don't worry about the output'''
-        
-'''
-1) Make all significant, but nonchanging, parts of the 
-two layer code into separate classes for example updates
-and leave the changing parts alone to avoid having to go
-to a separate file instead of manually changing just one
-file. Should only have two more to do, updates and figures
-'''
-        
-'''
-2) Once all classes are done, make changes to the original
-two layer model script by replacing all the chunks of code 
-that are already made into classes to make it look nicer.
-'''
-        
-'''
-3) Get code to run/work
-'''
-        
-'''
-4) Bonus: Get code to create exactly what the original 
-two layer model script outputs
-'''

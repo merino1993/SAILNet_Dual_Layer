@@ -14,7 +14,7 @@ from classtrial1 import TwoLayerInference
 from classtrial1 import Updates
 
 with open('output.pkl','r') as f:
-    Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2=cPickle.load(f)
+    Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2,SNR_1,SNR_2=cPickle.load(f)
 
 import matplotlib.pyplot as plt
 K = Q2 #Q2.shape = (25,25)
@@ -34,6 +34,14 @@ plt.title("Mean Squared Error of SAILNet's Reconstruction with Layer 1")
 plt.figure()
 plt.plot(reconstruction_error2)
 plt.title("Mean Squared Error of SAILNet's Reconstruction with Layer 2")
+
+plt.figure()
+plt.plot(SNR_1)
+plt.title("Signal to Noise ratio for Layer 1")
+
+plt.figure()
+plt.plot(SNR_2)
+plt.title("Signal to Noise ratio for Layer 2")
 
 #plot all receptive fields
 plt.figure()

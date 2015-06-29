@@ -17,7 +17,7 @@ rng = np.random.RandomState(0)
 
 # Parameters
 batch_size = 128
-num_trials = 100
+num_trials = 10000
 #change num_trials to 10000, reduce batch_size 128
 
 # Load Images
@@ -92,6 +92,8 @@ algo_time = 0.
 X = np.zeros((batch_size,N))
 reconstruction_error1 = np.zeros(num_trials) #want to keep track of during learning, run per batch
 reconstruction_error2 = np.zeros(num_trials)
+SNR_1=np.zeros(num_trials)
+SNR_2=np.zeros(num_trials)
 
 infer=TwoLayerInference(network)
 updates=Updates(network, alpha, beta, gamma, p)
@@ -117,10 +119,14 @@ for tt in xrange(num_trials):
     muY2 = np.mean(Y2,axis=0)
     Cyy1 = Y1.T.dot(Y1)/batch_size
     Cyy2 = Y2.T.dot(Y2)/batch_size
-         
+    Q1, Q2= network.feedforward_weights
+      
     #reconstruction error
     reconstruction_error1[tt] = np.mean((X-Y1.dot(Q1.T))**2)/2.
     reconstruction_error2[tt] = np.mean((Y1-Y2.dot(Q2.T))**2)/2.
+    
+    SNR_1[tt] = np.var(X)/np.var(X-Y1.dot(Q1.T))
+    SNR_2[tt] = np.var(Y1)/np.var(Y1-Y2.dot(Q2.T))    
     
     updates.update_inhibitory_weights(Cyy1, Cyy2)
     updates.update_feedforward_weights(Y1, Y2, X, batch_size)
@@ -149,6 +155,5 @@ for tt in xrange(num_trials):
 print ''        
    
 with open('output.pkl','wb') as f:
-    cPickle.dump((Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2),f)
-    
-    
+    cPickle.dump((Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2, SNR_1, SNR_2),f)
+     
