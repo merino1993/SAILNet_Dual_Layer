@@ -30,9 +30,9 @@ BUFF = 20 #number of pixels outside of image that don't get sampled from for inp
 
 # Neuron Parameters
 #Layer 1
-N = 144 #number of inputs
+N = 256 #number of inputs
 sz = np.sqrt(N).astype(np.int)
-OC1 = 2 #overcompleteness 
+OC1 = 6 #overcompleteness 
 M1 = OC1*N #number of neurons
 
 '''
@@ -41,7 +41,7 @@ If OC1 does not equal OC2 we get an error due to mismatching
 
 #Layer 2
 sz = np.sqrt(N).astype(np.int)
-OC2 = 2 #overcompleteness WITH RESPECT TO LAYER 1
+OC2 = 6 #overcompleteness WITH RESPECT TO LAYER 1
 M2 = OC2*N #number of neurons
 
 # Network Parameters

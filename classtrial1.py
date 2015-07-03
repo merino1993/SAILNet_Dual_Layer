@@ -44,7 +44,7 @@ class TwoLayerInference(BaseInference):
         eta = .1
     
         B1 = inputs.dot(Q1)
-        B2 = np.zeros((batch_size,M1)) #initialise since aas hasn't been defined yet, need to re-update after each step since inputs for layer 2 are the changing spiking patterns
+       
         #batch_size,M1
         T1 = np.tile(theta1,(batch_size,1))
         T2 = np.tile(theta2,(batch_size,1))
@@ -62,20 +62,21 @@ class TwoLayerInference(BaseInference):
         
         for tt in xrange(num_iterations):
             Ys1 = (1.-eta)*Ys1+eta*(B1-aas1.dot(W1))
-            Ys2 = (1.-eta)*Ys2+eta*(B2-aas2.dot(W2))
+            
             aas1 = np.zeros((batch_size,M1))
             aas1[Ys1 > T1] = 1.
             Y1 += aas1
             Ys1[Ys1 > T1] = 0.
-            
+        B2 = aas1.dot(Q2) #weights that determine how strongly layer 2 neurons excites layer 1 neurons
+        for tt in xrange(num_iterations):
+            Ys2 = (1.-eta)*Ys2+eta*(B2-aas2.dot(W2))
             aas2 = np.zeros((batch_size,M2))
             aas2[Ys2 > T2] = 1.
             Y2 += aas2
             Ys2[Ys2 > T2] = 0.
             
-            B2 = aas1.dot(Q2) #weights that determine how strongly layer 2 neurons excites layer 1 neurons
-    
         return Y1, Y2
+        
         
 class Updates(object):
     def __init__(self, network, alpha, beta, gamma, p):
