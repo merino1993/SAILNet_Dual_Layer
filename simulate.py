@@ -9,9 +9,9 @@ import numpy as np
 import cPickle, time
 from math import ceil
 from Utils import tile_raster_images
-from classtrial1 import Network
-from classtrial1 import TwoLayerInference
-from classtrial1 import Updates
+from classes import Network
+from classes import TwoLayerInference
+from classes import Updates
 
 rng = np.random.RandomState(0)
 

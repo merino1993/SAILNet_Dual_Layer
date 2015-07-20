@@ -25,28 +25,28 @@ from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 pp = PdfPages('plots.pdf')
 
-indxs=np.zeros((5,5))
-for n in range(5):
+nL1=5
+nL2=5
+indxs=np.zeros((nL2,nL1))
+for n in range(nL2):
     v=Q2[:,n]
-    for c in range(5):
-        idx=np.argmax(abs(v))
+    for c in range(nL1):
+        idx=np.argmax(v)
         indxs[n,c]=idx
         v[idx]=0
+L2C=np.zeros((nL1*nL2,N))
+for i,n in enumerate(indxs.ravel()):
+    L2C[i]=Q1[:,n]
+    print i,n
 
 plt.figure()
-plt.plot(indxs)
-plt.title("Strongest Layer 2 Neuron Connections to Layer 1 Neurons")
+side = int(np.sqrt(N))
+print side
+img = tile_raster_images(L2C, img_shape = (side,side), tile_shape = (nL1,nL2), tile_spacing=(1, 1), scale_rows_to_unit_interval=True, output_pixel_vals=True)
+plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
+plt.title('Layer 2 Receptive Fields')
 pp.savefig()
 #Find the 2 layer neurons that have the strongest connection to the 1 layer neurons
-
-K = Q2 #Q2.shape = (25,25)
-idx = K.argsort() #sorts in increasing order
-print '5 strongest receptive fields in layer 2 (decreasing order): '
-print K[idx[-1]], ' index '+str(idx[-1])
-print K[idx[-2]], ' index '+str(idx[-2])
-print K[idx[-3]], ' index '+str(idx[-3])
-print K[idx[-4]], ' index '+str(idx[-4])
-print K[idx[-5]], ' index '+str(idx[-5])
 
 
 plt.figure()
@@ -74,7 +74,7 @@ plt.figure()
 side = int(np.sqrt(N))
 img = tile_raster_images(Q1.T, img_shape = (side,side), tile_shape = (2*side,side*OC1/2), tile_spacing=(1, 1), scale_rows_to_unit_interval=True, output_pixel_vals=True)
 plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
-plt.title('Receptive Fields')
+plt.title('Layer 1 Receptive Fields')
 pp.savefig()
 pp.close()
 plt.show()
