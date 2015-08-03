@@ -12,27 +12,21 @@ from Utils import tile_raster_images
 from classes import Network
 from classes import TwoLayerInference
 from classes import Updates
-
-rng = np.random.RandomState(0)
+from classes import Data
 
 # Parameters
 batch_size = 128
-num_trials = 10000
-#change num_trials to 10000, reduce batch_size 128
+num_trials = 10
 
-# Load Images
-with open('images.pkl','rb') as f:
-    images = cPickle.load(f)
-imsize, imsize, num_images = images.shape
-images = np.transpose(images,axes=(2,0,1))
-
-BUFF = 20 #number of pixels outside of image that don't get sampled from for inputs
+filename='images.pkl'
+patch_size = (16,16)
+data=Data(filename, patch_size, seed=20150727)
 
 # Neuron Parameters
 #Layer 1
-N = 256 #number of inputs
-sz = np.sqrt(N).astype(np.int)
-OC1 = 6 #overcompleteness 
+N = 256
+'ask Jesse how to call N from classes using command of syntax data.get_batch(patch_size)'
+OC1 = 1 #overcompleteness 
 M1 = OC1*N #number of neurons
 
 '''
@@ -40,12 +34,20 @@ If OC1 does not equal OC2 we get an error due to mismatching
 '''
 
 #Layer 2
-sz = np.sqrt(N).astype(np.int)
-OC2 = 6 #overcompleteness WITH RESPECT TO LAYER 1
+
+OC2 = 1 #overcompleteness WITH RESPECT TO LAYER 1
 M2 = OC2*N #number of neurons
 
 # Network Parameters
 p = .05 #p = target firing rate = # spikes per image
+
+# Load Images
+with open('images.pkl','rb') as f:
+    images = cPickle.load(f)
+imsize, imsize, num_images = images.shape
+images = np.transpose(images,axes=(2,0,1))
+
+# BUFF = 20 (number of pixels outside of image that don't get sampled from for inputs)
 
 # Initialize Weights
 Q1 = rng.randn(N,M1)
@@ -89,7 +91,7 @@ data_time = 0.
 algo_time = 0.
 
 # Begin Learning
-X = np.zeros((batch_size,N))
+X = data.get_batch(batch_size)
 reconstruction_error1 = np.zeros(num_trials) #want to keep track of during learning, run per batch
 reconstruction_error2 = np.zeros(num_trials)
 SNR_1=np.zeros(num_trials)
@@ -101,13 +103,6 @@ updates=Updates(network, alpha, beta, gamma, p)
 for tt in xrange(num_trials):
     # Extract image patches from images
     dt = time.time()
-    for ii in xrange(batch_size):
-        r = BUFF+int((imsize-sz-2.*BUFF)*rng.rand())
-        c = BUFF+int((imsize-sz-2.*BUFF)*rng.rand())
-        myimage = images[int(num_images*rng.rand()),r:r+sz,c:c+sz].ravel()
-        myimage = myimage-np.mean(myimage)
-        myimage = myimage/np.std(myimage)
-        X[ii] = myimage
         
     dt = time.time()-dt
     data_time += dt/60.
@@ -155,5 +150,5 @@ for tt in xrange(num_trials):
 print ''        
    
 with open('output.pkl','wb') as f:
-    cPickle.dump((Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2, SNR_1, SNR_2),f)
+    cPickle.dump((Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2, SNR_1, SNR_2, X),f)
      

@@ -131,6 +131,7 @@ class Data(object):
         N=np.prod(self.patch_size)
         X = np.zeros((batch_size,N))
         BUFF=self.BUFF
+        rng=self.rng
         sz_1, sz_2=self.patch_size
         imsize=self.imsize
         images=self.images
