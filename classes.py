@@ -7,6 +7,7 @@ Created on Mon Mar 16 13:26:16 2015
 
 import numpy as np
 from Utils import tile_raster_images
+import cPickle
 
 class Network(object):
     def __init__(self, feedforward_weights, inhibitory_weights, thresholds):
@@ -116,7 +117,32 @@ class Updates(object):
         theta1 += dtheta1
         theta2 += dtheta2
         self.network.thresholds = theta1, theta2
-
-
-    
-'''Get new code to run, don't worry about the output'''
+        
+class Data(object):
+    def __init__(self, filename, patch_size, seed=20150727):
+        self.patch_size=patch_size
+        self.rng=np.random.RandomState(seed)
+        with open(filename,'rb') as f:
+            images = cPickle.load(f)
+        self.imsize, self.imsize, self.num_images = images.shape
+        self.images = np.transpose(images,axes=(2,0,1))
+        self.BUFF = 20
+    def get_batch(self,batch_size):
+        N=np.prod(self.patch_size)
+        X = np.zeros((batch_size,N))
+        BUFF=self.BUFF
+        sz_1, sz_2=self.patch_size
+        imsize=self.imsize
+        images=self.images
+        num_images=self.num_images
+        for ii in xrange(batch_size):
+            r = BUFF+int((imsize-sz_1-2.*BUFF)*rng.rand())
+            c = BUFF+int((imsize-sz_2-2.*BUFF)*rng.rand())
+            myimage = images[int(num_images*rng.rand()),
+                             r:r+sz_1,
+                             c:c+sz_2].ravel()
+            X[ii] = myimage
+        X=X-X.mean(axis=1,keepdims=True)
+        X=X/X.std(axis=1,keepdims=True)
+        return X
+        
