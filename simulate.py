@@ -14,6 +14,8 @@ from classes import TwoLayerInference
 from classes import Updates
 from classes import Data
 
+rng=np.random.RandomState(0)
+
 # Parameters
 batch_size = 128
 num_trials = 10000
