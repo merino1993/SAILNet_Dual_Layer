@@ -29,12 +29,16 @@ beta = .02
 gamma = .12
 sz = int(np.sqrt(N))
 
-batch_size = 128
+batch_size = 5000
 patch_size = (16,16)
+
+filename='images.pkl'
+data=Data(filename, patch_size, seed=20150727)
+X = data.get_batch(batch_size)
 
 network=Network([Q1, Q2], [W1, W2], [theta1, theta2])
 infer=TwoLayerInference(network)
-Y=infer.activities(X)
+Y1, Y2 =infer.activities(X)
 
 
 from matplotlib.backends.backend_pdf import PdfPages
@@ -60,21 +64,30 @@ for i,n in enumerate(indxs.ravel()):
 #plot for Layer 2 Receptive Field
 plt.figure()
 side = int(np.sqrt(N))
-img = tile_raster_images(L2C, img_shape = (side,side), tile_shape = (nL1,nL2), tile_spacing=(1, 1), scale_rows_to_unit_interval=True, output_pixel_vals=True)
+img = tile_raster_images(L2C, img_shape = (side,side), tile_shape = (nL1,nL2), tile_spacing=(2, 2), scale_rows_to_unit_interval=True, output_pixel_vals=True)
 plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
 plt.title('Layer 2 Receptive Fields')
 pp.savefig()
 
 
 #STA: Spike Triggered Average
-STA=X.T.dot(Y)/batch_size
+STA1=X.T.dot(Y1)/batch_size
+STA2=X.T.dot(Y2)/batch_size
 
-#plot for Spike Triggered Average
+#plot for Spike Triggered Average for Layer 1
 plt.figure()
 side = int(np.sqrt(N))
-img = tile_raster_images(sz, img_shape = (side,side), tile_shape = patch_size, tile_spacing=(1, 1), scale_rows_to_unit_interval=True, output_pixel_vals=True)
+img = tile_raster_images(STA1.T, img_shape = patch_size, tile_shape = patch_size, tile_spacing=(2, 2), scale_rows_to_unit_interval=True, output_pixel_vals=True)
 plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
-plt.title('Spike Triggered Average')
+plt.title('Spike Triggered Average for Layer 1')
+pp.savefig()
+
+#plot for Spike Triggered Average for Layer 2
+plt.figure()
+side = int(np.sqrt(N))
+img = tile_raster_images(STA2.T, img_shape = patch_size, tile_shape = patch_size, tile_spacing=(2, 2), scale_rows_to_unit_interval=True, output_pixel_vals=True)
+plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
+plt.title('Spike Triggered Average for Layer 2')
 pp.savefig()
 
 #plot for Mean Squared Error of SAILNet's Reconstruction with Layer 1
@@ -108,7 +121,7 @@ pp.savefig()
 #plot for Layer 1 Receptive Field
 plt.figure()
 side = int(np.sqrt(N))
-img = tile_raster_images(Q1.T, img_shape = (side,side), tile_shape = (2*side,side*OC1/2), tile_spacing=(1, 1), scale_rows_to_unit_interval=True, output_pixel_vals=True)
+img = tile_raster_images(Q1.T, img_shape = (side,side), tile_shape = (2*side,side*OC1/2), tile_spacing=(2, 2), scale_rows_to_unit_interval=True, output_pixel_vals=True)
 plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
 plt.title('Layer 1 Receptive Fields')
 pp.savefig()

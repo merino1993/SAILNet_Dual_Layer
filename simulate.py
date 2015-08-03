@@ -27,7 +27,7 @@ data=Data(filename, patch_size, seed=20150727)
 # Neuron Parameters
 #Layer 1
 N = 256
-'ask Jesse how to call N from classes using command of syntax data.get_batch(patch_size)'
+'ask Jesse how to call N from classes using command of syntax data.get_batch(atch_size)'
 OC1 = 6 #overcompleteness 
 M1 = OC1*N #number of neurons
 
@@ -93,7 +93,7 @@ data_time = 0.
 algo_time = 0.
 
 # Begin Learning
-X = data.get_batch(batch_size)
+
 reconstruction_error1 = np.zeros(num_trials) #want to keep track of during learning, run per batch
 reconstruction_error2 = np.zeros(num_trials)
 SNR_1=np.zeros(num_trials)
@@ -105,7 +105,7 @@ updates=Updates(network, alpha, beta, gamma, p)
 for tt in xrange(num_trials):
     # Extract image patches from images
     dt = time.time()
-        
+    X = data.get_batch(batch_size)    
     dt = time.time()-dt
     data_time += dt/60.
     
