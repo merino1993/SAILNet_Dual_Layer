@@ -16,7 +16,7 @@ from classes import Data
 
 # Parameters
 batch_size = 128
-num_trials = 10
+num_trials = 10000
 
 filename='images.pkl'
 patch_size = (16,16)
@@ -26,7 +26,7 @@ data=Data(filename, patch_size, seed=20150727)
 #Layer 1
 N = 256
 'ask Jesse how to call N from classes using command of syntax data.get_batch(patch_size)'
-OC1 = 1 #overcompleteness 
+OC1 = 6 #overcompleteness 
 M1 = OC1*N #number of neurons
 
 '''
@@ -35,7 +35,7 @@ If OC1 does not equal OC2 we get an error due to mismatching
 
 #Layer 2
 
-OC2 = 1 #overcompleteness WITH RESPECT TO LAYER 1
+OC2 = 6 #overcompleteness WITH RESPECT TO LAYER 1
 M2 = OC2*N #number of neurons
 
 # Network Parameters
