@@ -15,8 +15,11 @@ from classes import Updates
 from classes import Data
 
 with open('output.pkl','r') as f:
-    Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2,SNR_1,SNR_2,X=cPickle.load(f)
-    
+    network,reconstruction_error,SNR,SNR_norm,Q_norm_mean,Q_norm_std=cPickle.load(f)
+
+Q1, Q2 = network.get_feedforward_weights()
+W1, W2 = network.get_inhibitory_weights()
+theta1, theta2 = network.get_thresholds()
 
 N=Q1.shape[0]
 OC1=Q1.shape[1]/N

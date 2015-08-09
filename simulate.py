@@ -18,7 +18,7 @@ rng=np.random.RandomState(0)
 
 # Parameters
 batch_size = 128
-num_trials = 10000
+num_trials = 100
 
 filename='images.pkl'
 patch_size = (16,16)
@@ -28,7 +28,7 @@ data=Data(filename, patch_size, seed=20150727)
 #Layer 1
 N = 256
 'ask Jesse how to call N from classes using command of syntax data.get_batch(atch_size)'
-OC1 = 6 #overcompleteness 
+OC1 = 2 #overcompleteness 
 M1 = OC1*N #number of neurons
 
 '''
@@ -37,7 +37,7 @@ If OC1 does not equal OC2 we get an error due to mismatching
 
 #Layer 2
 
-OC2 = 6 #overcompleteness WITH RESPECT TO LAYER 1
+OC2 = 2 #overcompleteness WITH RESPECT TO LAYER 1
 M2 = OC2*N #number of neurons
 
 # Network Parameters
@@ -80,24 +80,17 @@ alpha = 1.
 beta = .02
 gamma = .12
 
-eta_ave = .3
-
-Y_ave1 = p
-Y_ave2 = p
-Cyy_ave1 = p**2
-Cyy_ave2 = p**2
-
-
 # Zero timing variables
 data_time = 0.
 algo_time = 0.
 
 # Begin Learning
 
-reconstruction_error1 = np.zeros(num_trials) #want to keep track of during learning, run per batch
-reconstruction_error2 = np.zeros(num_trials)
-SNR_1=np.zeros(num_trials)
-SNR_2=np.zeros(num_trials)
+reconstruction_error = np.zeros((2, num_trials)) #want to keep track of during learning, run per batch
+SNR = np.zeros((2, num_trials))
+SNR_norm = np.zeros((2, num_trials))
+Q_norm_mean = np.zeros((2, num_trials))
+Q_norm_std = np.zeros((2, num_trials))
 
 infer=TwoLayerInference(network)
 updates=Updates(network, alpha, beta, gamma, p)
@@ -119,38 +112,45 @@ for tt in xrange(num_trials):
     Q1, Q2= network.feedforward_weights
       
     #reconstruction error
-    reconstruction_error1[tt] = np.mean((X-Y1.dot(Q1.T))**2)/2.
-    reconstruction_error2[tt] = np.mean((Y1-Y2.dot(Q2.T))**2)/2.
-    
-    SNR_1[tt] = np.var(X)/np.var(X-Y1.dot(Q1.T))
-    SNR_2[tt] = np.var(Y1)/np.var(Y1-Y2.dot(Q2.T))    
+    X_rec = Y1.dot(Q1.T)
+    Y1_rec = Y2.dot(Q2.T)
+    X_norm = (X*X).sum(1, keepdims=True)
+    Y1_norm = (Y1*Y1).sum(1, keepdims=True)
+    X_rec_norm = (X_rec*X_rec).sum(1, keepdims=True)
+    Y1_rec_norm = (Y1_rec*Y1_rec).sum(1, keepdims=True)
+    X_rec_normed = X_rec*X_norm/X_rec_norm
+    Y1_rec_normed = Y1_rec*Y1_norm/Y1_rec_norm
+
+    reconstruction_error[0,tt] = np.mean((X-X_rec)**2)/2.
+    reconstruction_error[1,tt] = np.mean((Y1-Y1_rec)**2)/2.
+    SNR[0,tt] = (X.var(0)/(X-X_rec).var(0)).mean()
+    SNR[1,tt] = (Y1.var(0)/(Y1-Y1_rec).var(0)).mean()
+    SNR_norm[0,tt] = (X.var(0)/(X-X_rec_normed).var(0)).mean()
+    SNR_norm[1,tt] = (Y1.var(0)/(Y1-Y1_rec_normed).var(0)).mean()
+    Q_norm_mean[0,tt] = (Q1*Q1).sum(0).mean()
+    Q_norm_mean[1,tt] = (Q2*Q2).sum(0).mean()
+    Q_norm_std[0,tt] = (Q1*Q1).sum(0).std()
+    Q_norm_std[1,tt] = (Q2*Q2).sum(0).std()
     
     updates.update_inhibitory_weights(Cyy1, Cyy2)
     updates.update_feedforward_weights(Y1, Y2, X, batch_size)
     updates.update_thresholds(muY1, muY2, gamma, p, batch_size)
+    dt = time.time()-dt
+    algo_time += dt/60.   
 
-    Y_ave1 = (1.-eta_ave)*Y_ave1 + eta_ave*muY1
-    Y_ave2 = (1.-eta_ave)*Y_ave2 + eta_ave*muY2
-    Cyy_ave1=(1.-eta_ave)*Cyy_ave1 + eta_ave*Cyy1
-    Cyy_ave2=(1.-eta_ave)*Cyy_ave2 + eta_ave*Cyy2
-    
     if tt%100 == 0:
         print 'Batch: '+str(tt)+' out of '+str(num_trials)
         print 'Cumulative time spent gathering data: '+str(data_time)+' min'
         print 'Cumulative time spent in SAILnet: '+str(algo_time)+' min'
+        print 'SNR1: '+str(SNR[0,tt])
+        print 'SNR2: '+str(SNR[1,tt])
+        print 'SNR1_norm: '+str(SNR_norm[0,tt])
+        print 'SNR2_norm: '+str(SNR_norm[1,tt])
         print ''
-        print 'print spiking rates of neuron in layer 1'
-        print Y_ave1
-        print ''
-        print 'print spiking rates of neuron in layer 2'
-        print Y_ave2
-        #print 'correlation of timing in layer 1' Cyy_ave1   
 
-        dt = time.time()-dt
-        algo_time += dt/60.   
    
 print ''        
    
 with open('output.pkl','wb') as f:
-    cPickle.dump((Q1,Q2,W1,W2,theta1,theta2,reconstruction_error1,reconstruction_error2, SNR_1, SNR_2, X),f)
+    cPickle.dump((network,reconstruction_error, SNR, SNR_norm, Q_norm_mean, Q_norm_std),f)
      
