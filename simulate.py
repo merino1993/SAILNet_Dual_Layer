@@ -18,7 +18,7 @@ rng=np.random.RandomState(0)
 
 # Parameters
 batch_size = 128
-num_trials = 100
+num_trials = 10000
 
 filename='images.pkl'
 patch_size = (16,16)
@@ -27,8 +27,8 @@ data=Data(filename, patch_size, seed=20150727)
 # Neuron Parameters
 #Layer 1
 N = 256
-'ask Jesse how to call N from classes using command of syntax data.get_batch(atch_size)'
-OC1 = 2 #overcompleteness 
+'ask Jesse how to call N from classes using command of syntax data.get_batch(batch_size)'
+OC1 = 6 #overcompleteness 
 M1 = OC1*N #number of neurons
 
 '''
@@ -37,7 +37,7 @@ If OC1 does not equal OC2 we get an error due to mismatching
 
 #Layer 2
 
-OC2 = 2 #overcompleteness WITH RESPECT TO LAYER 1
+OC2 = 6 #overcompleteness WITH RESPECT TO LAYER 1
 M2 = OC2*N #number of neurons
 
 # Network Parameters
