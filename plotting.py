@@ -32,7 +32,7 @@ beta = .02
 gamma = .12
 sz = int(np.sqrt(N))
 
-batch_size = 5000
+batch_size = 500
 patch_size = (16,16)
 
 filename='images.pkl'
@@ -50,8 +50,8 @@ pp = PdfPages('plots.pdf')
 
 
 #Find the 2 layer neurons that have the strongest connection to the 1 layer neurons
-nL1=5
-nL2=5
+nL1=10
+nL2=10
 indxs=np.zeros((nL2,nL1))
 for n in range(nL2):
     v=Q2[:,n]
@@ -64,12 +64,23 @@ for i,n in enumerate(indxs.ravel()):
     L2C[i]=Q1[:,n]
 
 
-#plot for Layer 2 Receptive Field
+#plot for Layer 1 Receptive Field
+plt.figure()
+side = int(np.sqrt(N))
+img = tile_raster_images(Q1.T, img_shape = (side,side), tile_shape = (2*side,side*OC1/2), tile_spacing=(2, 2), scale_rows_to_unit_interval=True, output_pixel_vals=True)
+plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
+plt.title('Layer 1 Receptive Fields')
+pp.savefig()
+
+
+#plot for Layer 2 connection strengths to Layer 1
 plt.figure()
 side = int(np.sqrt(N))
 img = tile_raster_images(L2C, img_shape = (side,side), tile_shape = (nL1,nL2), tile_spacing=(2, 2), scale_rows_to_unit_interval=True, output_pixel_vals=True)
 plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
-plt.title('Layer 2 Receptive Fields')
+plt.title('Layer 2 connection strengths to Layer 1')
+plt.xlabel('Layer 1 Receptive Fields')
+plt.ylabel('Layer 2 Neurons')
 pp.savefig()
 
 
@@ -95,38 +106,59 @@ pp.savefig()
 
 #plot for Mean Squared Error of SAILNet's Reconstruction with Layer 1
 plt.figure()
-plt.plot(reconstruction_error1)
+plt.plot(reconstruction_error[0])
 plt.title("Mean Squared Error of SAILNet's Reconstruction with Layer 1")   
 pp.savefig()
 
 
 #plot for Mean Squared Error of SAILNet's Reconstruction with Layer 2
 plt.figure()
-plt.plot(reconstruction_error2)
+plt.plot(reconstruction_error[1])
 plt.title("Mean Squared Error of SAILNet's Reconstruction with Layer 2")
 pp.savefig()
 
 
 #plot for Signal to Noise ratio for Layer 1
 plt.figure()
-plt.plot(SNR_1)
+plt.plot(SNR[0])
 plt.title("Signal to Noise ratio for Layer 1")
 pp.savefig()
 
 
 #plot for Signal to Noise ratio for Layer 2
 plt.figure()
-plt.plot(SNR_2)
+plt.plot(SNR[1])
 plt.title("Signal to Noise ratio for Layer 2")
 pp.savefig()
 
 
-#plot for Layer 1 Receptive Field
+#plot for Normalized Signal to Noise ratio for Layer 1
 plt.figure()
-side = int(np.sqrt(N))
-img = tile_raster_images(Q1.T, img_shape = (side,side), tile_shape = (2*side,side*OC1/2), tile_spacing=(2, 2), scale_rows_to_unit_interval=True, output_pixel_vals=True)
-plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
-plt.title('Layer 1 Receptive Fields')
+plt.plot(SNR_norm[0])
+plt.title("Normalized Signal to Noise ratio for Layer 1")
 pp.savefig()
+
+#plot for Normalized Signal to Noise ratio for Layer 2
+plt.figure()
+plt.plot(SNR_norm[1])
+plt.title("Normalized Signal to Noise ratio for Layer 2")
+pp.savefig()
+
+
+#plot for Log Mean Filter Norm
+plt.figure()
+plt.plot(np.log(Q_norm_mean[0]))
+plt.plot(np.log(Q_norm_mean[1]))
+plt.title("Log Mean Filter Norm")
+pp.savefig()
+
+
+#plot for Log Standard Deviation Filter Norm
+plt.figure()
+plt.plot(np.log(Q_norm_std[0]))
+plt.plot(np.log(Q_norm_std[1]))
+plt.title("Log Standard Deviation Filter Norm")
+pp.savefig()
+
 pp.close()
 plt.show()

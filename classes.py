@@ -122,7 +122,7 @@ class Data(object):
     def __init__(self, filename, patch_size, seed=20150727):
         self.patch_size=patch_size
         self.rng=np.random.RandomState(seed)
-        with open(filename,'rb') as f:
+        with open(filename,'r') as f:
             images = cPickle.load(f)
         self.imsize, self.imsize, self.num_images = images.shape
         self.images = np.transpose(images,axes=(2,0,1))
