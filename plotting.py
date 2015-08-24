@@ -25,7 +25,7 @@ N=Q1.shape[0]
 OC1=Q1.shape[1]/N
 M1=Q1.shape[1]
 OC2=Q2.shape[1]/M1
-'M2='
+M2=OC2*N
 
 p = .05
 alpha = 1.
@@ -84,8 +84,9 @@ plt.xlabel('Layer 1 Receptive Fields')
 plt.ylabel('Layer 2 Neurons')
 pp.savefig()
 
+
 #histogram of mean firing rates for Layer 1
-fig = plt.figure()
+plt.figure()
 Y1_mean=np.mean(Y1,axis=0)
 num, bin_edges = np.histogram(Y1_mean, bins = 50, density = True)
 bin_edges = bin_edges[1:]
@@ -94,7 +95,8 @@ plt.title('Mean Firing Rates for Layer 1')
 plt.xlabel('Mean Firing Rate (Y1)')
 plt.ylabel('Number of Neurons (N)')
 plt.show()
-pp.savefig()
+#pp.savefig()
+
 
 #histogram of mean firing rates for Layer 2
 fig = plt.figure()
@@ -106,7 +108,8 @@ plt.title('Mean Firing Rates for Layer 2')
 plt.xlabel('Mean Firing Rate (Y2)')
 plt.ylabel('Number of Neurons (N)')
 plt.show()
-pp.savefig()
+#pp.savefig
+
 
 #histogram of Connectivity Learned by SAILNet for Layer 1
 fig = plt.figure()
@@ -124,6 +127,7 @@ plt.xlabel("Inhibitory Connection Strength (W1)")
 plt.ylabel("PDF log(connection strength)")
 pp.savefig()
 
+
 #histogram of Connectivity Learned by SAILNet for Layer 2
 fig = plt.figure()
 W_flat = np.ravel(W2) #Flattens array
@@ -139,28 +143,11 @@ plt.title('Connectivity Learned for Layer 2')
 plt.xlabel("Inhibitory Connection Strength (W2)")
 plt.ylabel("PDF log(connection strength)")
 pp.savefig()
-pp.savefig()
-
-
-
-
-
 
 
 #histogram of Normalized Connectivity Learned by SAILNet for Layer 1
 fig = plt.figure()
-RF_overlap = Q1.T.dot(Q1) #Flattens array
-RF_overlap = np.ravel(Q1.T.dot(Q1)) #Flattens array
-
-W_flat = np.ravel(W1) #Flattens array
-plt.scatter(W_flat,Q_flat)
-plt.title('Connectivity Learned for Layer 1')
-plt.xlabel('Inhibitory Connection Strength (W1)')
-plt.ylabel('RF Overlap Q1.T.dot(Q1)')
-plt.show()
-pp.savefig()
-
-
+RF_overlap = Q1.T.dot(Q1)
 RF_sample = np.array([])
 W_sample = np.array([])
 for ii in range (5000):
@@ -168,47 +155,59 @@ for ii in range (5000):
     Overlap = RF_overlap[pair[0]][pair[1]]
     RF_sample = np.append(RF_sample, np.array([Overlap]))
     Wij = W1[pair[0]][pair[1]]
-    #w2 = self.network.W[pair[1]][pair[0]]
-    #w_avg = (w1+w2)/2
     W_sample = np.append(W_sample,np.array([Wij]))
-#zeros = np.nonzero(W_sample == 0) #Locates zeros
-#W_sample = np.delete(W_sample, zeros) #Deletes Zeros
-#RF_sample = np.delete(RF_sample,zeros)
-#W_sample = np.log(W_sample)/np.log(10)
-#plt.xlim(10**-3,10**1.5)
 plt.semilogx(W_sample, RF_sample, '.')
-#plt.gcf().subplots_adjust(bottom=0.15)
-plt.xlabel("Inhibitory Connection Strength")
-#plt.ylim(-0.7,0.7)
-plt.ylabel("RF Overlap (Dot product)")
-
-
-
-
-
-
+plt.title('Normalized Connectivity Learned by SAILNet for Layer 1')
+plt.xlabel('Inhibitory Connection Strength (W1)')
+plt.ylabel('RF Overlap (Dot product: Q1.T.dot(Q1))')
+plt.show()
+#pp.savefig()
 
 
 #histogram of Normalized Connectivity Learned by SAILNet for Layer 2
 fig = plt.figure()
-Q_flat = np.ravel(Q2.T.dot(Q2)) #Flattens array
-W_flat = np.ravel(W2) #Flattens array
-plt.scatter(W_flat,Q_flat)
-plt.title('Connectivity Learned for Layer 2')
+RF_overlap = Q2.T.dot(Q2)
+RF_sample = np.array([])
+W_sample = np.array([])
+for ii in range (5000):
+    pair = np.random.permutation(M2)[:2]
+    Overlap = RF_overlap[pair[0]][pair[1]]
+    RF_sample = np.append(RF_sample, np.array([Overlap]))
+    Wij = W1[pair[0]][pair[1]]
+    W_sample = np.append(W_sample,np.array([Wij]))
+plt.semilogx(W_sample, RF_sample, '.')
+plt.title('Normalized Connectivity Learned by SAILNet for Layer 2')
 plt.xlabel('Inhibitory Connection Strength (W2)')
 plt.ylabel('RF Overlap Q2.T.dot(Q2)')
 plt.show()
-pp.savefig()
+#pp.savefig()
 
-'''
-#histogram of Firing Rate Correlation
-plt.figure()
-plt.hist(p, bins=20, histtype='step')
-plt.title('Connectivity Learned for Layer 1')
-plt.xlabel('Firing Rate Correlation (p?)')
-plt.ylabel('RF Correlations')
+
+#histogram of Firing Rate Correlation for Layer 1
+fig = plt.figure()
+corrcoef = np.corrcoef(Y1,y=None,rowvar=1, bias=0, ddof=None)
+corrcoef = corrcoef - np.diag(np.diag(corrcoef)) #removes diagonal of corrcoef matrix
+corrcoef = np.ravel(corrcoef) #Flattens array
+plt.hist(corrcoef,bins = 50,normed= True)
+plt.title('Firing Rate Correlation for Layer 1')
+plt.xlabel('Firing Rate Correlation')
+plt.ylabel('PDF of Firing Rate Correlation')
 plt.show()
-'''
+#pp.savefig()
+
+
+#histogram of Firing Rate Correlation for Layer 2
+fig = plt.figure()
+corrcoef = np.corrcoef(Y2,y=None,rowvar=1, bias=0, ddof=None)
+corrcoef = corrcoef - np.diag(np.diag(corrcoef)) #removes diagonal of corrcoef matrix
+corrcoef = np.ravel(corrcoef) #Flattens array
+plt.hist(corrcoef,bins = 50,normed= True)
+plt.title('Firing Rate Correlation for Layer 2')
+plt.xlabel('Firing Rate Correlation')
+plt.ylabel('PDF of Firing Rate Correlation')
+plt.show()
+#pp.savefig()
+
 
 #STA: Spike Triggered Average
 STA1=X.T.dot(Y1)/batch_size
@@ -222,6 +221,7 @@ plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
 plt.title('Spike Triggered Average for Layer 1')
 pp.savefig()
 
+
 #plot for Spike Triggered Average for Layer 2
 plt.figure()
 side = int(np.sqrt(N))
@@ -229,6 +229,7 @@ img = tile_raster_images(STA2.T, img_shape = patch_size, tile_shape = patch_size
 plt.imshow(img,cmap=plt.cm.Greys, interpolation='nearest')
 plt.title('Spike Triggered Average for Layer 2')
 pp.savefig()
+
 
 #plot for Mean Squared Error of SAILNet's Reconstruction with Layer 1
 plt.figure()
