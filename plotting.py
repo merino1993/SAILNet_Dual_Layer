@@ -94,8 +94,7 @@ plt.plot(bin_edges,num,'o')
 plt.title('Mean Firing Rates for Layer 1')
 plt.xlabel('Mean Firing Rate (Y1)')
 plt.ylabel('Number of Neurons (N)')
-plt.show()
-#pp.savefig()
+pp.savefig()
 
 
 #histogram of mean firing rates for Layer 2
@@ -107,8 +106,7 @@ plt.plot(bin_edges,num,'o')
 plt.title('Mean Firing Rates for Layer 2')
 plt.xlabel('Mean Firing Rate (Y2)')
 plt.ylabel('Number of Neurons (N)')
-plt.show()
-#pp.savefig
+pp.savefig()
 
 
 #histogram of Connectivity Learned by SAILNet for Layer 1
@@ -160,8 +158,7 @@ plt.semilogx(W_sample, RF_sample, '.')
 plt.title('Normalized Connectivity Learned by SAILNet for Layer 1')
 plt.xlabel('Inhibitory Connection Strength (W1)')
 plt.ylabel('RF Overlap (Dot product: Q1.T.dot(Q1))')
-plt.show()
-#pp.savefig()
+pp.savefig()
 
 
 #histogram of Normalized Connectivity Learned by SAILNet for Layer 2
@@ -179,8 +176,7 @@ plt.semilogx(W_sample, RF_sample, '.')
 plt.title('Normalized Connectivity Learned by SAILNet for Layer 2')
 plt.xlabel('Inhibitory Connection Strength (W2)')
 plt.ylabel('RF Overlap Q2.T.dot(Q2)')
-plt.show()
-#pp.savefig()
+pp.savefig()
 
 
 #histogram of Firing Rate Correlation for Layer 1
@@ -192,8 +188,7 @@ plt.hist(corrcoef,bins = 50,normed= True)
 plt.title('Firing Rate Correlation for Layer 1')
 plt.xlabel('Firing Rate Correlation')
 plt.ylabel('PDF of Firing Rate Correlation')
-plt.show()
-#pp.savefig()
+pp.savefig()
 
 
 #histogram of Firing Rate Correlation for Layer 2
@@ -205,8 +200,7 @@ plt.hist(corrcoef,bins = 50,normed= True)
 plt.title('Firing Rate Correlation for Layer 2')
 plt.xlabel('Firing Rate Correlation')
 plt.ylabel('PDF of Firing Rate Correlation')
-plt.show()
-#pp.savefig()
+pp.savefig()
 
 
 #STA: Spike Triggered Average
