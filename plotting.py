@@ -181,10 +181,12 @@ pp.savefig()
 
 #histogram of Firing Rate Correlation for Layer 1
 fig = plt.figure()
-corrcoef = np.corrcoef(Y1,y=None,rowvar=1, bias=0, ddof=None)
-corrcoef = corrcoef - np.diag(np.diag(corrcoef)) #removes diagonal of corrcoef matrix
-corrcoef = np.ravel(corrcoef) #Flattens array
-plt.hist(corrcoef,bins = 50,normed= True)
+corrcoef = np.corrcoef(Y1, rowvar=0)
+corrcoef_flat=np.array([])
+for ii in range(M1-1):
+    corrcoef_flat=np.append(corrcoef_flat,corrcoef[ii,ii+1:])
+corrcoef_flat[np.isnan(corrcoef_flat)] = 0.
+plt.hist(corrcoef_flat,bins = 50,normed= True)
 plt.title('Firing Rate Correlation for Layer 1')
 plt.xlabel('Firing Rate Correlation')
 plt.ylabel('PDF of Firing Rate Correlation')
@@ -193,10 +195,12 @@ pp.savefig()
 
 #histogram of Firing Rate Correlation for Layer 2
 fig = plt.figure()
-corrcoef = np.corrcoef(Y2,y=None,rowvar=1, bias=0, ddof=None)
-corrcoef = corrcoef - np.diag(np.diag(corrcoef)) #removes diagonal of corrcoef matrix
-corrcoef = np.ravel(corrcoef) #Flattens array
-plt.hist(corrcoef,bins = 50,normed= True)
+corrcoef = np.corrcoef(Y2, rowvar=0)
+corrcoef_flat=np.array([])
+for ii in range(M2-1):
+    corrcoef_flat=np.append(corrcoef_flat,corrcoef[ii,ii+1:])
+corrcoef_flat[np.isnan(corrcoef_flat)] = 0.
+plt.hist(corrcoef_flat,bins = 50,normed= True)
 plt.title('Firing Rate Correlation for Layer 2')
 plt.xlabel('Firing Rate Correlation')
 plt.ylabel('PDF of Firing Rate Correlation')
