@@ -18,7 +18,7 @@ rng=np.random.RandomState(0)
 
 # Parameters
 batch_size = 128
-num_trials = 10000
+num_trials = 50000
 
 filename='images.pkl'
 patch_size = (16,16)
